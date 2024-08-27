@@ -1,20 +1,38 @@
 from turtle import Turtle
+ALIGNMENT = "center"
+FONT = ("Courier", 24, "normal")
+
 
 
 class Scoreboard(Turtle):
 
-    def __init__(self, score=0):
+    def __init__(self):
         super().__init__()
-        self.goto(x=0, y=280)
-        self.score = score
-        self.penup()
+        self.score = 0
         self.color("white")
+        with open("data.txt") as data:
+            self.highscore = int(data.read())
+        self.penup()
+        self.goto(0, 270)
         self.hideturtle()
-        # It could be a good idea to add the 'align' and 'font' as constants top of the code
-        self.write(f"Score: {self.score}", move=False, align='center', font=('Arial', 12, 'normal'))
+        self.update_scoreboard()
+
+    def update_scoreboard(self):
+        self.clear()
+        self.write(f"Score: {self.score} Highscore: {self.highscore}", align=ALIGNMENT, font=FONT)
 
     def game_over(self):
-        self.goto(x=0, y=0)
-        self.write("GAME OVER", move=False, align='center', font=('Arial', 12, 'normal'))
+        self.goto(0, 0)
+        self.write("GAME OVER", align=ALIGNMENT, font=FONT)
 
+    def reset(self):
+        if self.score > self.highscore:
+            self.highscore = self.score
+        with open("data.txt", mode="w") as data2:
+            data2.write(str(self.highscore))
+        self.score = 0
+        self.update_scoreboard()
 
+    def increase_score(self):
+        self.score += 1
+        self.update_scoreboard()
